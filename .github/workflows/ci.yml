@@ -5,14 +5,14 @@ on:
     branches:
      - main
      - next
-     - 'v*'
+     - v*
     paths-ignore:
-      - 'docs/**'
-      - '*.md'
+     - docs/**
+     - '*.md'
   pull_request:
     paths-ignore:
-      - 'docs/**'
-      - '*.md'
+     - docs/**
+     - '*.md'
 
 permissions:
   contents: read
@@ -20,37 +20,37 @@ permissions:
 jobs:
   test-regression-check-node10:
     name: Test compatibility with Node.js 10
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
+     - uses: actions/checkout@v4
+       with:
+         persist-credentials: false
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '10'
-          cache: 'npm'
-          cache-dependency-path: package.json
-          check-latest: true
+     - uses: actions/setup-node@v4
+       with:
+         node-version: '10'
+         cache: npm
+         cache-dependency-path: package.json
+         check-latest: true
 
-      - name: Install
-        run: |
-          npm install --ignore-scripts
+     - name: Install
+       run: |
+         npm install --ignore-scripts
 
-      - name: Copy project as fast-uri to node_node_modules
-        run: |
-          rm -rf ./node_modules/fast-uri/lib &&
-          rm -rf ./node_modules/fast-uri/index.js &&
-          cp -r ./lib ./node_modules/fast-uri/lib &&
-          cp ./index.js ./node_modules/fast-uri/index.js
+     - name: Copy project as fast-uri to node_node_modules
+       run: |
+         rm -rf ./node_modules/fast-uri/lib &&
+         rm -rf ./node_modules/fast-uri/index.js &&
+         cp -r ./lib ./node_modules/fast-uri/lib &&
+         cp ./index.js ./node_modules/fast-uri/index.js
 
-      - name: Run tests
-        run: |
-          npm run test:unit
-        env:
-          NODE_OPTIONS: no-network-family-autoselection
+     - name: Run tests
+       run: |
+         npm run test:unit
+       env:
+         NODE_OPTIONS: no-network-family-autoselection
 
   test-browser:
     name: Test browser compatibility
@@ -58,39 +58,39 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
-        browser: ['chromium', 'firefox', 'webkit']
+        os: [ubuntu-24.04, windows-2025, macos-15]
+        browser: [chromium, firefox, webkit]
         exclude:
-          - os: ubuntu-latest
-            browser: webkit
+         - os: ubuntu-24.04
+           browser: webkit
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
+     - uses: actions/checkout@v4
+       with:
+         persist-credentials: false
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: 'npm'
-          cache-dependency-path: package.json
-          check-latest: true
+     - uses: actions/setup-node@v4
+       with:
+         node-version: '24'
+         cache: npm
+         cache-dependency-path: package.json
+         check-latest: true
 
-      - name: Install dependencies
-        run: |
-          npm install --ignore-scripts
-      
-      - if: ${{ matrix.os == 'windows-latest' }}
-        run: npx playwright install winldd
+     - name: Install dependencies
+       run: |
+         npm install --ignore-scripts
 
-      - name: Run browser tests
-        run: |
-          npm run test:browser:${{ matrix.browser }}
-  
+     - if: ${{ matrix.os == 'windows-2025' }}
+       run: npx playwright install winldd
+
+     - name: Run browser tests
+       run: |
+         npm run test:browser:${{ matrix.browser }}
+
   test:
     needs:
-      - test-regression-check-node10
+     - test-regression-check-node10
     permissions:
       contents: write
       pull-requests: write

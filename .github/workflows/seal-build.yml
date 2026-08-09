@@ -9,6 +9,7 @@ on:
   push:
     branches:
       - main
+      - master
   pull_request:
 
 permissions:
@@ -21,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
+        os: [ubuntu-24.04, windows-2025, macos-15]
         node-version: ['16', '18', '20', '22', '23', '24']
     steps:
       - uses: actions/checkout@v4
@@ -45,10 +46,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
-        browser: ['chromium', 'firefox', 'webkit']
+        os: [ubuntu-24.04, windows-2025, macos-15]
+        browser: [chromium, firefox, webkit]
         exclude:
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             browser: webkit
     steps:
       - uses: actions/checkout@v4
@@ -63,7 +64,7 @@ jobs:
       - name: Install
         run: npm install --ignore-scripts
 
-      - if: ${{ matrix.os == 'windows-latest' }}
+      - if: ${{ matrix.os == 'windows-2025' }}
         run: npx playwright install winldd
 
       - name: Run browser tests
@@ -71,7 +72,7 @@ jobs:
 
   test-regression-check-node10:
     name: Test compatibility with Node.js 10
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -101,7 +102,7 @@ jobs:
 
   pack:
     name: Pack npm tarball
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
       - test
       - test-browser
